@@ -7,7 +7,8 @@ def gen_inter_arrival_time():
     return np.random.exponential(1)
 
 def gen_service_time():
-    return np.random.exponential(3.33)
+    #return np.random.exponential(0.99)
+    return (0.99)
 
 def simulation_run(env,servers):
     i=0
@@ -39,7 +40,7 @@ def results(env,servers):
         q_length.append(len(servers.queue))
         yield env.timeout(0.5)
 
-np.random.seed(1)
+np.random.seed(2)
 
 env=simpy.Environment()
 
@@ -48,31 +49,26 @@ servers = simpy.Resource(env, capacity=1)
 env.process(simulation_run(env,servers))
 env.process(results(env,servers))
 
-env.run(until=110)
-
+env.run(until=120)
 
 sum_wait_time = sum(wait_time)
 
 avg_q_length=sum(q_length)/len(q_length)
-
+avg_g_time=sum(wait_time)/len(number_of_packets_departure)
 part_sum_wait_time = list(itertools.accumulate(wait_time))
 print ("############################################################################################")
 print (f"Zostalo obsluzonych w sumie {len(number_of_packets_departure)} pakietow")
-print(f"Calkowity czas oczekiwania dla wszystkich pakietów wyniósł {sum(wait_time)}")
-print(f"Średni czas oczekiwania na obsługę dla jednego pakietu wyniósł {sum(wait_time)/len(number_of_packets_departure)}")
-print(f"Średnie zapełnienie kolejki wyniosło {avg_q_length}")
+print(f"Calkowity czas oczekiwania dla wszystkich pakietow wyniosl {sum(wait_time)}")
+print(f"Sredni czas oczekiwania na obsluge dla jednego pakietu wyniosl {avg_g_time}")
+print(f"Srednie zapelnienie kolejki wynioslo {avg_q_length}")
 print ("############################################################################################")
 
 len_array = [i+1 for i in range(len(number_of_packets_departure))]
 
-
-
 plot1=plt.figure(1)
 plt.hist(wait_time)
 plt.xlabel('Czas oczekiwania (min)')
-plt.ylabel('Liczba pakietów')
-
-
+plt.ylabel('Liczba pakietow')
 
 plot1=plt.figure(2)
 plt.plot(len_array,part_sum_wait_time)
@@ -87,7 +83,7 @@ plt.ylabel('Czas oczekiwania')
 plot2=plt.figure(4)
 plt.step(obs_times, q_length, where='post')
 plt.xlabel('Czas (min)')
-plt.ylabel('Zapełnienie kolejki')
+plt.ylabel('Zapelnienie kolejki')
 plt.show()
 
 
